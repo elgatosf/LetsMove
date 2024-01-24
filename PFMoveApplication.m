@@ -100,6 +100,14 @@ void PFMoveToApplicationsFolderIfNecessary(void) {
 	BOOL installToUserApplications = NO;
 	NSString *applicationsDirectory = PreferredInstallLocation(&installToUserApplications);
 	NSString *bundleName = [bundlePath lastPathComponent];
+
+    NSString *forcedName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"PFMoveForcedApplicationName"];
+    if ([forcedName isKindOfClass:[NSString class]]) {
+        if (![[forcedName pathExtension] isEqualToString:@"app"]) {
+            forcedName = [forcedName stringByAppendingPathExtension:@"app"];
+        }
+        bundleName = forcedName;
+    }
 	NSString *destinationPath = [applicationsDirectory stringByAppendingPathComponent:bundleName];
 
 	// Check if we need admin password to write to the Applications directory
