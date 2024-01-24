@@ -109,7 +109,7 @@ void PFMoveToApplicationsFolderIfNecessary(void) {
 	needAuthorization |= ([fm fileExistsAtPath:destinationPath] && ![fm isWritableFileAtPath:destinationPath]);
 
 	// Setup the alert
-	NSAlert *alert = [[[NSAlert alloc] init] autorelease];
+	NSAlert *alert = [[NSAlert alloc] init];
 	{
 		NSString *informativeText = nil;
 
@@ -225,7 +225,7 @@ void PFMoveToApplicationsFolderIfNecessary(void) {
 fail:
 	{
 		// Show failure message
-		alert = [[[NSAlert alloc] init] autorelease];
+		alert = [[NSAlert alloc] init];
 		[alert setMessageText:kStrMoveApplicationCouldNotMove];
 		[alert runModal];
 		MoveInProgress = NO;
@@ -341,7 +341,7 @@ static NSString *ContainingDiskImageDevice(NSString *path) {
 
 	NSString *device = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:fs.f_mntfromname length:strlen(fs.f_mntfromname)];
 
-	NSTask *hdiutil = [[[NSTask alloc] init] autorelease];
+	NSTask *hdiutil = [[NSTask alloc] init];
 	[hdiutil setLaunchPath:@"/usr/bin/hdiutil"];
 	[hdiutil setArguments:[NSArray arrayWithObjects:@"info", @"-plist", nil]];
 	[hdiutil setStandardOutput:[NSPipe pipe]];
@@ -409,12 +409,12 @@ static BOOL Trash(NSString *path) {
 	// This allows us to trash the app in macOS Sierra even when the app is running inside
 	// an app translocation image.
 	if (!result) {
-		NSAppleScript *appleScript = [[[NSAppleScript alloc] initWithSource:
+		NSAppleScript *appleScript = [[NSAppleScript alloc] initWithSource:
 									   [NSString stringWithFormat:@"\
 										set theFile to POSIX file \"%@\" \n\
 									   	tell application \"Finder\" \n\
 									  		move theFile to trash \n\
-									  	end tell", path]] autorelease];
+									  	end tell", path]];
 		NSDictionary *errorDict = nil;
 		NSAppleEventDescriptor *scriptResult = [appleScript executeAndReturnError:&errorDict];
 		if (scriptResult == nil) {
