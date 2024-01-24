@@ -141,7 +141,7 @@ void PFMoveToApplicationsFolderIfNecessary(void) {
 
 		if (PFUseSmallAlertSuppressCheckbox) {
 			NSCell *cell = [[alert suppressionButton] cell];
-			[cell setControlSize:NSSmallControlSize];
+			[cell setControlSize:NSControlSizeSmall];
 			[cell setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
 		}
 	}
@@ -215,7 +215,7 @@ void PFMoveToApplicationsFolderIfNecessary(void) {
 		exit(0);
 	}
 	// Save the alert suppress preference if checked
-	else if ([[alert suppressionButton] state] == NSOnState) {
+	else if ([[alert suppressionButton] state] == NSControlStateValueOn) {
 		[[NSUserDefaults standardUserDefaults] setBool:YES forKey:AlertSuppressKey];
 	}
 
@@ -232,7 +232,7 @@ fail:
 	}
 }
 
-BOOL PFMoveIsInProgress() {
+BOOL PFMoveIsInProgress(void) {
     return MoveInProgress;
 }
 
@@ -392,7 +392,12 @@ static BOOL Trash(NSString *path) {
 	BOOL result = NO;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
 	if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_8) {
-		result = [[NSFileManager defaultManager] trashItemAtURL:[NSURL fileURLWithPath:path] resultingItemURL:NULL error:NULL];
+		NSError *error = nil;
+		result = [[NSFileManager defaultManager] trashItemAtURL:[NSURL fileURLWithPath:path] resultingItemURL:NULL error:&error];
+		
+		if (!result) {
+			NSLog(@"trashItemAtURL error: %@", error);
+		}
 	}
 #endif
 #if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_11
